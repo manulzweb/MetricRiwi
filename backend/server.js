@@ -30,4 +30,11 @@ server.listen(env.port, () => {
   console.log(`[server] FeedbackAI escuchando en http://localhost:${env.port}`);
 });
 
+// En hosts con un solo proceso (p. ej. plan gratuito de Render) el worker
+// puede ejecutarse dentro del mismo proceso que el servidor web.
+if (process.env.INLINE_WORKER === 'true') {
+  require('./workers/analysisWorker');
+  console.log('[server] Worker de análisis ejecutándose en este mismo proceso (INLINE_WORKER=true)');
+}
+
 module.exports = { app, server, io };

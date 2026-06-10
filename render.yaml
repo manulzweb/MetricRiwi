@@ -1,0 +1,45 @@
+# Blueprint de Render para desplegar FeedbackAI con un clic.
+# Crea: servicio web Node (con el worker en el mismo proceso),
+# PostgreSQL gratuito y Key Value (Redis) gratuito.
+# Docs: https://render.com/docs/blueprint-spec
+
+databases:
+  - name: feedbackai-db
+    plan: free
+    databaseName: feedbackai
+    user: feedbackai
+
+services:
+  - type: keyvalue
+    name: feedbackai-redis
+    plan: free
+    ipAllowList: [] # solo conexiones internas
+
+  - type: web
+    name: feedbackai
+    runtime: node
+    plan: free
+    branch: claude/feedbackai-saas-mvp-2drbfn
+    buildCommand: npm ci
+    startCommand: npm run migrate && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: INLINE_WORKER
+        value: "true"
+      # Sin ANTHROPIC_API_KEY la app usa el analizador mock.
+      # Para usar Claude: agrega ANTHROPIC_API_KEY en el dashboard y pon MOCK_AI=false.
+      - key: MOCK_AI
+        value: "true"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: feedbackai-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: feedbackai-redis
+          property: connectionString

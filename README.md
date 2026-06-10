@@ -46,6 +46,21 @@ npm run worker:dev         # worker de análisis
 
 Abre `http://localhost:3000`, regístrate, y sube `samples/comentarios.csv` para ver el flujo completo (progreso en vivo → reporte).
 
+## Despliegue en Render (gratis)
+
+El repo incluye un blueprint (`render.yaml`) que crea todo lo necesario: servicio web Node (con el worker en el mismo proceso vía `INLINE_WORKER=true`), PostgreSQL y Key Value (Redis), todos en plan gratuito.
+
+1. Crea una cuenta en [render.com](https://render.com) (puedes entrar con GitHub).
+2. En el dashboard: **New → Blueprint** y conecta este repositorio.
+3. Selecciona la rama que contiene `render.yaml` y pulsa **Apply**.
+4. En unos minutos tendrás una URL pública `https://feedbackai-XXXX.onrender.com`, accesible desde cualquier móvil.
+
+Notas:
+- Por defecto despliega con `MOCK_AI=true` (no necesita API key). Para usar Claude real, agrega `ANTHROPIC_API_KEY` y cambia `MOCK_AI=false` en el dashboard del servicio.
+- En el plan gratuito el servicio se "duerme" tras 15 min sin tráfico (la primera visita tarda ~30 s en despertar) y la base PostgreSQL gratuita expira a los 30 días.
+
+> GitHub Pages no sirve para esta app: solo hospeda archivos estáticos y FeedbackAI necesita backend (Express, PostgreSQL, Redis y websockets).
+
 ## Variables de entorno
 
 | Variable | Descripción | Default |
