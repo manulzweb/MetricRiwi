@@ -6,9 +6,11 @@ const env = require('./config/env');
 const authRoutes = require('./routes/authRoutes');
 const analysisRoutes = require('./routes/analysisRoutes');
 const { errorHandler, notFoundHandler } = require('./middlewares/errorHandler');
+const { initSocket } = require('./sockets/socket');
 
 const app = express();
 const server = http.createServer(app);
+const io = initSocket(server);
 
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
@@ -28,4 +30,4 @@ server.listen(env.port, () => {
   console.log(`[server] FeedbackAI escuchando en http://localhost:${env.port}`);
 });
 
-module.exports = { app, server };
+module.exports = { app, server, io };
