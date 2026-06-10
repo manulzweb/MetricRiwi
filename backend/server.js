@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const env = require('./config/env');
 const authRoutes = require('./routes/authRoutes');
+const analysisRoutes = require('./routes/analysisRoutes');
 const { errorHandler, notFoundHandler } = require('./middlewares/errorHandler');
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 // API
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.use('/api/auth', authRoutes);
+app.use('/api/analysis', analysisRoutes);
 
 app.use('/api', notFoundHandler);
 app.use(errorHandler);
